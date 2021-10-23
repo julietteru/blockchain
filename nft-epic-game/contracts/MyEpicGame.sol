@@ -17,6 +17,16 @@ contract MyEpicGame is ERC721 {
         uint256 attackDamage;
     }
 
+    struct BigBoss {
+        string name;
+        string imageURI;
+        uint256 hp;
+        uint256 maxHp;
+        uint256 attackDamage;
+    }
+
+    BigBoss public bigBoss;
+
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -29,8 +39,49 @@ contract MyEpicGame is ERC721 {
         string[] memory characterNames,
         string[] memory characterImageURIs,
         uint256[] memory characterHps,
-        uint256[] memory characterAttackDmg
+        uint256[] memory characterAttackDmg,
+        string memory bossName,
+        string memory bossImageURI,
+        uint256 bossHp,
+        uint256 bossAttackDamage
     ) ERC721("Heroes", "Hero") {
+        initializeNFTCharacters(
+            characterNames,
+            characterImageURIs,
+            characterHps,
+            characterAttackDmg
+        );
+        initializeNFTBoss(bossName, bossImageURI, bossHp, bossAttackDamage);
+    }
+
+    function initializeNFTBoss(
+        string memory bossName,
+        string memory bossImageURI,
+        uint256 bossHp,
+        uint256 bossAttackDamage
+    ) private {
+        bigBoss = BigBoss({
+            name: bossName,
+            imageURI: bossImageURI,
+            hp: bossHp,
+            maxHp: bossHp,
+            attackDamage: bossAttackDamage
+        });
+
+        console.log(
+            "Done initializing boss %s w/ HP %s, img %s",
+            bigBoss.name,
+            bigBoss.hp,
+            bigBoss.imageURI
+        );
+    }
+
+    function initializeNFTCharacters(
+        string[] memory characterNames,
+        string[] memory characterImageURIs,
+        uint256[] memory characterHps,
+        uint256[] memory characterAttackDmg
+    ) private {
         for (uint256 index = 0; index < characterNames.length; index++) {
             defaultCharacters.push(
                 CharacterAttributes({
@@ -114,8 +165,50 @@ contract MyEpicGame is ERC721 {
             )
         );
 
-        string memory output = string(abi.encodePacked("data:application/json;base64,", json));
+        string memory output = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
 
         return output;
+    }
+
+    function attackBoss() external {
+        uint256 ntfTokenIdOfPlayer = nftHolders[msg.sender];
+        CharacterAttributes storage player = nftHolderAttributes[
+            ntfTokenIdOfPlayer
+        ];
+
+        console.log(
+            "\nPlayer w/ character %s about to attack. Has %s HP and %s AD",
+            player.name,
+            player.hp,
+            player.attackDamage
+        );
+
+        console.log(
+            "Boss %s has %s HP and %s AD",
+            bigBoss.name,
+            bigBoss.hp,
+            bigBoss.attackDamage
+        );
+
+        require(player.hp > 0, "Error: character must have hp to attack boss.");
+        require(bigBoss.hp > 0, "Error: boss must have HP to attack boss");
+
+        if (bigBoss.hp < player.attackDamage) {
+            bigBoss.hp = 0;
+        } else {
+            bigBoss.hp = bigBoss.hp - player.attackDamage;
+        }
+
+        console.log("Player attacked boos. New boss hp: %s\n", bigBoss.hp);
+
+        if (player.hp < bigBoss.attackDamage) {
+            player.hp = 0;
+        } else {
+            player.hp = player.hp - bigBoss.attackDamage;
+        }
+
+        console.log("Boss attacked player. New player hp: %s\n", player.hp);
     }
 }
