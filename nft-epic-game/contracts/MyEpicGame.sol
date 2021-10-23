@@ -8,6 +8,17 @@ import "hardhat/console.sol";
 import "./libraries/Base64.sol";
 
 contract MyEpicGame is ERC721 {
+
+    BigBoss public bigBoss;
+
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
+
+    CharacterAttributes[] defaultCharacters;
+    
+    mapping(uint256 => CharacterAttributes) public nftHolderAttributes;
+    mapping(address => uint256) public nftHolders;
+
     struct CharacterAttributes {
         uint256 characterIndex;
         string name;
@@ -24,16 +35,6 @@ contract MyEpicGame is ERC721 {
         uint256 maxHp;
         uint256 attackDamage;
     }
-
-    BigBoss public bigBoss;
-
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-
-    CharacterAttributes[] defaultCharacters;
-
-    mapping(uint256 => CharacterAttributes) public nftHolderAttributes;
-    mapping(address => uint256) public nftHolders;
 
     event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
     event AttackComplete(uint newBossHp, uint newPlayerHp);
@@ -56,59 +57,8 @@ contract MyEpicGame is ERC721 {
         );
         initializeNFTBoss(bossName, bossImageURI, bossHp, bossAttackDamage);
     }
-
-    function initializeNFTBoss(
-        string memory bossName,
-        string memory bossImageURI,
-        uint256 bossHp,
-        uint256 bossAttackDamage
-    ) private {
-        bigBoss = BigBoss({
-            name: bossName,
-            imageURI: bossImageURI,
-            hp: bossHp,
-            maxHp: bossHp,
-            attackDamage: bossAttackDamage
-        });
-
-        console.log(
-            "Done initializing boss %s w/ HP %s, img %s",
-            bigBoss.name,
-            bigBoss.hp,
-            bigBoss.imageURI
-        );
-    }
-
-    function initializeNFTCharacters(
-        string[] memory characterNames,
-        string[] memory characterImageURIs,
-        uint256[] memory characterHps,
-        uint256[] memory characterAttackDmg
-    ) private {
-        for (uint256 index = 0; index < characterNames.length; index++) {
-            defaultCharacters.push(
-                CharacterAttributes({
-                    characterIndex: index,
-                    name: characterNames[index],
-                    imageURI: characterImageURIs[index],
-                    hp: characterHps[index],
-                    maxHp: characterHps[index],
-                    attackDamage: characterAttackDmg[index]
-                })
-            );
-
-            CharacterAttributes memory character = defaultCharacters[index];
-            console.log(
-                "Done initializing %s w/ HP %s, img %s",
-                character.name,
-                character.hp,
-                character.imageURI
-            );
-        }
-        _tokenIds.increment();
-    }
-
-    function mintCharacterNFT(uint256 _characterIndex) external {
+    
+     function mintCharacterNFT(uint256 _characterIndex) external {
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
         nftHolderAttributes[newItemId] = CharacterAttributes({
@@ -239,7 +189,60 @@ contract MyEpicGame is ERC721 {
         return defaultCharacters;
     }
 
-    function getBigBoss public view returns (BigBoss memory){
+    function getBigBoss() public view returns (BigBoss memory){
         return bigBoss;
     }
+
+    function initializeNFTBoss(
+        string memory bossName,
+        string memory bossImageURI,
+        uint256 bossHp,
+        uint256 bossAttackDamage
+    ) private {
+        bigBoss = BigBoss({
+            name: bossName,
+            imageURI: bossImageURI,
+            hp: bossHp,
+            maxHp: bossHp,
+            attackDamage: bossAttackDamage
+        });
+
+        console.log(
+            "Done initializing boss %s w/ HP %s, img %s",
+            bigBoss.name,
+            bigBoss.hp,
+            bigBoss.imageURI
+        );
+    }
+
+    function initializeNFTCharacters(
+        string[] memory characterNames,
+        string[] memory characterImageURIs,
+        uint256[] memory characterHps,
+        uint256[] memory characterAttackDmg
+    ) private {
+        for (uint256 index = 0; index < characterNames.length; index++) {
+            defaultCharacters.push(
+                CharacterAttributes({
+                    characterIndex: index,
+                    name: characterNames[index],
+                    imageURI: characterImageURIs[index],
+                    hp: characterHps[index],
+                    maxHp: characterHps[index],
+                    attackDamage: characterAttackDmg[index]
+                })
+            );
+
+            CharacterAttributes memory character = defaultCharacters[index];
+            console.log(
+                "Done initializing %s w/ HP %s, img %s",
+                character.name,
+                character.hp,
+                character.imageURI
+            );
+        }
+        _tokenIds.increment();
+    }
+
+   
 }
