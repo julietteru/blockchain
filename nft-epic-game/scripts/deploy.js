@@ -6,7 +6,7 @@ const main = async() => {
     //Deployment
     const gameContract = await gameContractFactory.deploy(
         ['Toshiro Hitsugaya', 'Hisoka Morrow', 'Itachi Uchiha'], //Names
-        ['https://lh3.googleusercontent.com/proxy/Ua1TN6BJUTbdZS6mGBhOS5zGFZpyBkN5KvLmhCQm1j_SDf52g4NDJpA5hqS-3e4BmRUwTo6fmDm9CLRl9vDmRTeB-2weRMST6XVxmcDPvZ2ucw', 'https://www.enwallpaper.com/wp-content/uploads/157a16d4b80aaad06056d0c7af2e68fd.jpg', 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.kolpaper.com%2F29856%2Fitachi-uchiha-wallpaper%2F&psig=AOvVaw1SPXzjyWp2GMQ1_OeTbtEK&ust=1635102038821000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCODR7feb4fMCFQAAAAAdAAAAABAD'], //Images
+        ['https://lh3.googleusercontent.com/proxy/Ua1TN6BJUTbdZS6mGBhOS5zGFZpyBkN5KvLmhCQm1j_SDf52g4NDJpA5hqS-3e4BmRUwTo6fmDm9CLRl9vDmRTeB-2weRMST6XVxmcDPvZ2ucw', 'https://www.enwallpaper.com/wp-content/uploads/157a16d4b80aaad06056d0c7af2e68fd.jpg', 'https://www.enjpg.com/img/2020/itachi-uchiha-4.jpg'], //Images
         [750, 1000, 500], //Hp values
         [800, 650, 1000], //Attack damage values
     );
