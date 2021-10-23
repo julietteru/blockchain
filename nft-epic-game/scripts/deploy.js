@@ -17,11 +17,18 @@ const main = async() => {
 
     let txn;
     txn = await gameContract.mintCharacterNFT(0);
-    txn = await gameContract.mintCharacterNFT(1);
-    txn = await gameContract.mintCharacterNFT(2);
+    await txn.wait();
+    console.log("Finished minting NFT #1");
 
-    let returneTokenUri = await gameContract.tokenURI(1);
-    console.log("Token uri:", returneTokenUri);
+    txn = await gameContract.mintCharacterNFT(1);
+    await txn.wait();
+    console.log("Finished minting NFT #2");
+
+    txn = await gameContract.mintCharacterNFT(2);
+    await txn.wait();
+    console.log("Finished minting NFT #3");
+
+    console.log("Finished minting and deploying");
 };
 
 const runMain = async() => {
